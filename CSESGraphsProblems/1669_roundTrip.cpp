@@ -37,21 +37,21 @@
 #define ALL(a)         a.begin(),a.end()
 #define PPB            pop_back
 #define MKP            make_pair
-
+ 
 using namespace std;
-
+ 
 int X[8] = {0,1,0,-1,1,-1,1,-1};
 int Y[8] = {1,0,-1,0,1,1,-1,-1}; 
-
+ 
 bool isValid(int i, int j,int n,int m) {
     if(i < 0 || j < 0 || i >= n || j >= m) return false;
     return true;
 }
-
+ 
 VVI edges;
 VVI graph;
 VVII weightedGraph;
-
+ 
 void readEdges(int M,bool isWeighted) {
     FOR(M) {
         int u,v,weight = 0;
@@ -62,7 +62,7 @@ void readEdges(int M,bool isWeighted) {
         edges.PB(VI{u,v,weight});
     }
 }
-
+ 
 void readEdgesAndCreatGraph(int n,int m,bool isWeighted,bool isDirected) {
     if(isWeighted) {
         weightedGraph.assign(n + 1,VII{});
@@ -82,7 +82,7 @@ void readEdgesAndCreatGraph(int n,int m,bool isWeighted,bool isDirected) {
         }
     }
 }
-
+ 
 void printGraph(int V, bool isWeighted) {
     cout<<"\n";
     cout<<"*****************  Printing Graph started: **********************\n";
@@ -98,7 +98,7 @@ void printGraph(int V, bool isWeighted) {
     }
     cout<<"*****************  Printing Graph Ended **********************\n\n";
 }
-
+ 
 void createGraphFromEdges(int V,VVI &edges,bool isDirected) {
     graph.assign(V,VI{});
     for(VI edge:edges) {
@@ -106,7 +106,7 @@ void createGraphFromEdges(int V,VVI &edges,bool isDirected) {
         if(!isDirected) graph[edge[1]].PB(edge[0]);
     }
 }
-
+ 
 void createWeightedGraphFromEdges(int V,VVI &edges,bool isDirected) {
     weightedGraph.assign(V,VII{});
     for(VI edge:edges) {
@@ -114,14 +114,14 @@ void createWeightedGraphFromEdges(int V,VVI &edges,bool isDirected) {
         if(!isDirected) weightedGraph[edge[1]].PB(MKP(edge[0],edge[2]));
     }
 }
-
+ 
 /* 
 ************************* SOLUTION STARTS HERE ****************************
 Identified by :
 So This is : 
-
+ 
 */
-
+ 
 int repeatedIdx(int start,VI &ans) {
     int n = ans.size();
     int idx = -1;
@@ -133,14 +133,14 @@ int repeatedIdx(int start,VI &ans) {
     
     return idx;
 }
-
-bool DFS(int u,int parent,VI &visited,VI &ans) {
-    visited[u] = 1;
+ 
+bool DFS(int u,int parent,VI &visited,VI &explored,VI &ans) {
+    visited[u] = explored[u] = 1;
     ans.PB(u);
     for(int v:graph[u]) {
         if(v == parent) continue;
         if(visited[v] == 0) {
-            if(DFS(v,u,visited,ans)) return true;
+            if(DFS(v,u,visited,explored,ans)) return true;
         }else {
             // Has cycle
             if(explored[v] != 0) {
@@ -159,7 +159,7 @@ bool DFS(int u,int parent,VI &visited,VI &ans) {
     explored[u] = 0;
     return false;
 }
-
+ 
 int main() {
     int n,m;
     cin>>n>>m;
@@ -180,7 +180,7 @@ int main() {
             }
         }
     }
-
+ 
     cout<<"IMPOSSIBLE";
     return 0;
 }
