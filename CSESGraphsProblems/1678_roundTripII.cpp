@@ -130,8 +130,10 @@ void readAndCreateAdjMatrix(int n,int m,bool isDirected) {
 
 /* 
 ************************* SOLUTION STARTS HERE ****************************
-Identified by :
-So This is : 
+Identified by : I need a backward edge.
+So This is : This can be done easily by using visited and explored arrays.
+                To obtain the order we can use stack.
+            (this is a part of articulation bridge based problem.)
 
 */
 
