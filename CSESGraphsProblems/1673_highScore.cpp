@@ -130,17 +130,57 @@ void readAndCreateAdjMatrix(int n,int m,bool isDirected) {
 
 /* 
 ************************* SOLUTION STARTS HERE ****************************
-Identified by :
-So This is : 
+Identified by : he asked me to caluculate maximum score from source to destinaion.
+                (reverse of Disjistra algorithm. -> instead of min we are finding maximum).
+
+So This is : Dijistra based problem.
+
+Approach :
+    1. apply disjistra algorithm.
+    2. after this there will be 3 cases based on dist and tempDist vector.
+        case 1: tempDist == dist --> dist[n]
+        case 2: dist[n] == -INFITE --> -1 is the answer.
+        case 3: tempDist != dist
+                    1. create an adj. list.
+                    2. mark the non simililar nodes from tempDist and dist.
+                    3. find whether we can reach marked from souce.
+                        . if we can then again from that point try to find whether we can reach destination
+                           then is -1.
+                        
+
 
 */
-void DFS_canReach(int u, VI &visited) {
+bool DFS_canReachDestinationFromMarked(int u, int n,VB &visited) {
+    if(u == n) return true;
+    visited[u] = true;
+    for(auto v:graph[u]) {
+        if(!visited[v]) {
+            if(DFS_canReachDestinationFromMarked(v,n,visited)) return true;
+        }
+    }
+    return false;
+}
+
+bool DFS_canReachMarkedFromSource(int u,int n, VB &visited,VB &marked) {
+    if(marked[u]) {
+        VB visitedFromMarkedToDestination(n + 1,false);
+        if(DFS_canReachDestinationFromMarked(u,n,visitedFromMarkedToDestination)) {
+            // cout<<"------------------\n";
+            // LOOP(i , 1, n + 1, 1) cout<<marked[i]<<" ";cout<<"\n";
+            // LOOP(i , 1, n + 1, 1) cout<<visited[i]<<" ";cout<<"\n";
+            // LOOP(i , 1, n + 1, 1) cout<<visitedFromMarkedToDestination[i]<<" ";cout<<"\n";
+            // cout<<"------------------\n";
+            return true;
+        }
+        return false;
+    }
     visited[u] = 1;
     for(auto v:graph[u]) {
         if(!visited[v]) {
-            DFS_canReach(v,visited);
+            if(DFS_canReachMarkedFromSource(v,n,visited,marked)) return true;
         }
     }
+    return false;
 }
 
 void belmanFordAlgorithm(int n,int m) {
@@ -159,42 +199,26 @@ void belmanFordAlgorithm(int n,int m) {
                 dist[v] = dist[u] + w;
             }
         }
-      //  FOR(n + 1) cout<<dist[i]<<" ";cout<<"\n";
+     //   FOR(n + 1) cout<<dist[i]<<" ";cout<<"\n";
         if(i == n - 2) tempDist = dist;
     }
 
-    //FOR(n + 1) cout<<dist[i]<<" ";cout<<"\n";
+   // FOR(n + 1) cout<<dist[i]<<" ";cout<<"\n";
   //  FOR(n + 1) cout<<tempDist[i]<<" ";cout<<"\n";
     if(dist[n] == 1e16){ 
         cout<<-1;
     }else if(tempDist == dist) {
         cout<<dist[n];
     }else {
-        VI marked(n + 1 , 0);
-        LOOP(i,1,n + 1, 1) if(dist[i] != tempDist[i]) marked[i] = 1;
-
-        graph.assign(n + 1 , VI{});
-        for(auto edge:edges) {
-            // creating graph in reverse direction.
-            graph[edge[1]].PB(edge[0]);
+        VB marked(n + 1 , false);
+        LOOP(i ,1 , n + 1, 1) if(tempDist[i] != dist[i]) marked[i] = true;
+        createGraphFromEdges(n,edges,true);
+        VB visited(n + 1, false);
+        if(DFS_canReachMarkedFromSource(1,n,visited,marked)) {
+            cout<<-1;
+        }else{
+            cout<<dist[n];
         }
-      //  printGraph(n , false);
-        VI visitedFromDestination(n + 1 , 0);
-        DFS_canReach(n,visitedFromDestination);
-        graph.clear();
-        graph.assign(n + 1, VI{});
-        for(auto edge:edges) {
-            // creating graph in direct direction.
-            graph[edge[0]].PB(edge[1]);
-        }
-        VI visitedFromSource(n + 1, 0);
-        DFS_canReach(n, visitedFromSource);
-
-        LOOP(i,1,n + 1, 1) if(marked[i] + visitedFromDestination[i] + visitedFromSource[i] == 3) {
-            cout<<"-1";
-            return;
-        }
-        cout<<dist[n];
     }
 }
 
