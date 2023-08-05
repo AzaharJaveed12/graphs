@@ -118,8 +118,8 @@ void createWeightedGraphFromEdges(int V,VVI &edges,bool isDirected) {
 }
 
 void readAndCreateAdjMatrix(int n,int m,bool isDirected) {
-    matrix.assign(n + 1 , VLL(n + 1 , INT_MAX));
-
+    matrix.assign(n + 1 , VLL(n + 1 , 1e16));
+    LOOP(i,1,n + 1, 1) matrix[i][i] = 0;
     FOR(m) {
         LL u,v,w;
         cin>>u>>v>>w;
@@ -131,11 +131,38 @@ void readAndCreateAdjMatrix(int n,int m,bool isDirected) {
 /* 
 ************************* SOLUTION STARTS HERE ****************************
 Identified by :
+    1. multiple source and multiple destinations.
 So This is : 
+    Floyed Warshal algorithm based problem.
 
+NOTE: we will be modifying matrix array itself.
 */
 
+void floydWarshalAlgorithm(int n) {
+    LOOP(i , 1, n + 1, 1) matrix[i][i] = 0;
+
+    LOOP(via, 1 , n + 1 , 1) {
+        LOOP(u , 1 , n + 1 , 1) {
+            LOOP(v , 1, n + 1, 1) {
+                matrix[u][v] = min(matrix[u][via] + matrix[via][v], matrix[u][v]);
+            }
+        }
+    }
+}
 
 int main() {
+    FIO;
+    int n,m,q;
+    cin>>n>>m>>q;
+    
+    readAndCreateAdjMatrix(n,m,false);
+    floydWarshalAlgorithm(n);
+
+    while(q--) {
+        int u,v;
+        cin>>u>>v;
+        cout<<(matrix[u][v] == 1e16 ?-1:matrix[u][v])<<"\n";
+    }
+
     return 0;
 }

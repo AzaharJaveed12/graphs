@@ -12,3 +12,7 @@
     WHEN HE SAYS MINIMUM PATHT THINK AS BFS...!!
 
 # 3 
+
+# 1673_highScore :
+    Not solved. failed to code how to find a marked which can be reached from source as well as from marked to destination.
+    Two level of DFS will work for this problem..!

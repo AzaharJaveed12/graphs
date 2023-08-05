@@ -134,8 +134,75 @@ Identified by :
 So This is : 
 
 */
+void DFS_canReach(int u, VI &visited) {
+    visited[u] = 1;
+    for(auto v:graph[u]) {
+        if(!visited[v]) {
+            DFS_canReach(v,visited);
+        }
+    }
+}
 
+void belmanFordAlgorithm(int n,int m) {
+    if(n == 1) {
+        cout<<-1;
+        return;
+    }
+    VLL dist(n + 1, -1e16 );
+    VLL tempDist;
+    dist[1] = 0;
+
+    LOOP(i , 0 , n, 1) {
+        LOOP(j , 0 , m , 1) {
+            LL u = edges[j][0] , v = edges[j][1] , w = edges[j][2];
+            if(dist[v] < dist[u] + w) {
+                dist[v] = dist[u] + w;
+            }
+        }
+      //  FOR(n + 1) cout<<dist[i]<<" ";cout<<"\n";
+        if(i == n - 2) tempDist = dist;
+    }
+
+    //FOR(n + 1) cout<<dist[i]<<" ";cout<<"\n";
+  //  FOR(n + 1) cout<<tempDist[i]<<" ";cout<<"\n";
+    if(dist[n] == 1e16){ 
+        cout<<-1;
+    }else if(tempDist == dist) {
+        cout<<dist[n];
+    }else {
+        VI marked(n + 1 , 0);
+        LOOP(i,1,n + 1, 1) if(dist[i] != tempDist[i]) marked[i] = 1;
+
+        graph.assign(n + 1 , VI{});
+        for(auto edge:edges) {
+            // creating graph in reverse direction.
+            graph[edge[1]].PB(edge[0]);
+        }
+      //  printGraph(n , false);
+        VI visitedFromDestination(n + 1 , 0);
+        DFS_canReach(n,visitedFromDestination);
+        graph.clear();
+        graph.assign(n + 1, VI{});
+        for(auto edge:edges) {
+            // creating graph in direct direction.
+            graph[edge[0]].PB(edge[1]);
+        }
+        VI visitedFromSource(n + 1, 0);
+        DFS_canReach(n, visitedFromSource);
+
+        LOOP(i,1,n + 1, 1) if(marked[i] + visitedFromDestination[i] + visitedFromSource[i] == 3) {
+            cout<<"-1";
+            return;
+        }
+        cout<<dist[n];
+    }
+}
 
 int main() {
+    int n,m;
+    cin>>n>>m;
+    //readEdgesAndCreatGraph(n,m,true,true);
+    readEdges(m,true);
+    belmanFordAlgorithm(n,m);
     return 0;
 }

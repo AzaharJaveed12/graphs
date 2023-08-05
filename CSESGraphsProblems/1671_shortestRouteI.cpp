@@ -52,7 +52,6 @@ bool isValid(int i, int j,int n,int m) {
 VVI edges;
 VVI graph;
 VVII weightedGraph;
-VVLL matrix;
 
 void readEdges(int M,bool isWeighted) {
     FOR(M) {
@@ -67,6 +66,7 @@ void readEdges(int M,bool isWeighted) {
 
 void readEdgesAndCreatGraph(int n,int m,bool isWeighted,bool isDirected) {
     if(isWeighted) {
+        map<II,int> mp; // uv --> weight
         weightedGraph.assign(n + 1,VII{});
         while(m--){
             int u,v,w;
@@ -102,7 +102,7 @@ void printGraph(int V, bool isWeighted) {
 }
 
 void createGraphFromEdges(int V,VVI &edges,bool isDirected) {
-    graph.assign(V + 1,VI{});
+    graph.assign(V,VI{});
     for(VI edge:edges) {
         graph[edge[0]].PB(edge[1]);
         if(!isDirected) graph[edge[1]].PB(edge[0]);
@@ -117,25 +117,68 @@ void createWeightedGraphFromEdges(int V,VVI &edges,bool isDirected) {
     }
 }
 
-void readAndCreateAdjMatrix(int n,int m,bool isDirected) {
-    matrix.assign(n + 1 , VLL(n + 1 , INT_MAX));
-
-    FOR(m) {
-        LL u,v,w;
-        cin>>u>>v>>w;
-        matrix[u][v] = min(w,matrix[u][v]);
-        if(!isDirected) matrix[v][u] = min(w,matrix[v][u]); 
-    }
-}
-
 /* 
 ************************* SOLUTION STARTS HERE ****************************
-Identified by :
-So This is : 
+Identified by : 
+ 1. We need to find the shortest path from source to destination
+ 2. There are no negative edges.
+
+So This is : Disjistra algorithm problem.
+
+NOTE: GOT TLE IF WE DONT USE : if(dist[u] < d) continue;
+    because, we already explored with better node so we dont wana explore with d any more..!!
 
 */
 
+void dijkstraAlgorithm(int n) {
+    int source = 1;
+    priority_queue<PLL,VPLL,greater<PLL>> pq;
+    
+    pq.push({0,source});
+    VLL dist(n + 1, 1e17);
+    dist[1] = 0;
+
+    while(!pq.empty()) {
+        PLL top = pq.top(); pq.pop();
+        int u = top.SS;
+        LL d = top.FF;
+        if(dist[u] < d) continue;
+        for(PLL v:weightedGraph[u]) {
+            LL vDistance = v.SS;
+            int vNode = v.FF;
+            if( d + vDistance < dist[vNode]) {
+                dist[vNode] = d + vDistance;
+                pq.push(MKP(dist[vNode],vNode));
+            }
+        }
+    }
+
+    LOOP(i,1,n + 1, 1) cout<<dist[i]<<" ";
+}
 
 int main() {
+    FIO;
+    int n,m;
+    cin>>n>>m;
+    
+    map<II,int> mp;
+    LOOP(i,0,m,1) {
+        int u,v,w;
+        cin>>u>>v>>w;
+        if(mp.count(MKP(u,v))) {
+            mp[MKP(u,v)] = min(w,mp[MKP(u,v)]);
+        }else{
+            mp[MKP(u,v)] = w;
+        }
+    }
+
+    VVI edgesWithoutDuplicateNodes;
+    for(auto it:mp) {
+        edgesWithoutDuplicateNodes.PB({it.FF.FF,it.FF.SS,it.SS});
+    }
+
+    createWeightedGraphFromEdges(n,edgesWithoutDuplicateNodes,true);
+  //  printGraph(n,true);
+    dijkstraAlgorithm(n);
     return 0;
 }
