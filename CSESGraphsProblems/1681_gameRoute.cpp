@@ -130,8 +130,9 @@ void readAndCreateAdjMatrix(int n,int m,bool isDirected) {
 
 /* 
 ************************* SOLUTION STARTS HERE ****************************
-Identified by :
-So This is : 
+Identified by : at every node, I need number of ways to reach destiantion.
+So This is : DFS based problem.
+    at every step ans gets updated to the number of ways to reach n from u.
 
 */
 
