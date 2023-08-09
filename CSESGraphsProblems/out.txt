@@ -1,18 +1,1 @@
-u 6 v 1 canBeKingdomOf 1
-stk[i] 1 canBeKingdomOf 1
-stk[i] 2 canBeKingdomOf 1
-stk[i] 6 canBeKingdomOf 1
-u 7 v 3 canBeKingdomOf 2
-stk[i] 3 canBeKingdomOf 2
-stk[i] 4 canBeKingdomOf 2
-stk[i] 7 canBeKingdomOf 2
-u 5 v 1 canBeKingdomOf 1
-stk[i] 1 canBeKingdomOf 1
-stk[i] 2 canBeKingdomOf 1
-stk[i] 3 canBeKingdomOf 1
-stk[i] 4 canBeKingdomOf 1
-stk[i] 5 canBeKingdomOf 1
-kingdomCount 2
-2
- 0 1 2 3 4 5 6 7 
--1 1 1 1 1 1 1 2 
+16
